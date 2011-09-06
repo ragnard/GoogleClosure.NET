@@ -1,0 +1,13 @@
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+*.suo
+*.sln.cache
+*resharper.user
+_ReSharper.*/
+*.user
+Qbranch.QNET.Web.Publish.xml
+*.bak
+*.vspscc
+*.vssscc
