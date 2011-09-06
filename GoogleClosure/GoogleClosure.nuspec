@@ -1,10 +1,17 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>$id$</id>
+    <id>GoogleClosure</id>
     <version>$version$</version>
-    <authors>Ragnar Dahlén (r.dahlen@gmail.com)</authors>
+    <authors>Ragnar Dahlen (r.dahlen@gmail.com)</authors>
+    <owners>Ragnar Dahlen (r.dahlen@gmail.com)</owners>
+    <!--<licenseUrl></licenseUrl>
+    <projectUrl></projectUrl>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Library and MSBuild tasks for using Google Closure library and compiler on .NET</description>
+    <description>Port of closurebuilder.py and depswriter.py to .NET. Includes MSBuild tasks for generating deps files, and compiling sources using closure-compiler.jar</description>
+    <tags>javascript google closure</tags>
   </metadata>
+  <files>
+	<file src="examples\**\*.*" target="examples" /> 
+  </files>
 </package>

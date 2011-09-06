@@ -3,7 +3,7 @@
 
   <UsingTask
     TaskName="GoogleClosure.MSBuild.CompileScripts"
-    AssemblyFile="[GoogleClosure.dll]" 
+    AssemblyFile="[path to GoogleClosure.dll]" 
   />
   
   <PropertyGroup>
@@ -27,8 +27,5 @@
     />
     
   </Target>
-
-
-
 
 </Project>

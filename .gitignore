@@ -7,7 +7,7 @@
 *resharper.user
 _ReSharper.*/
 *.user
-Qbranch.QNET.Web.Publish.xml
 *.bak
 *.vspscc
 *.vssscc
+*.nupkg
