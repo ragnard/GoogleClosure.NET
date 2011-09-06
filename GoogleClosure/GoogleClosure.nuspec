@@ -5,8 +5,8 @@
     <version>$version$</version>
     <authors>Ragnar Dahlen (r.dahlen@gmail.com)</authors>
     <owners>Ragnar Dahlen (r.dahlen@gmail.com)</owners>
-    <!--<licenseUrl></licenseUrl>
-    <projectUrl></projectUrl>-->
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
+    <projectUrl>http://github.com/ragnard/GoogleClosure</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Port of closurebuilder.py and depswriter.py to .NET. Includes MSBuild tasks for generating deps files, and compiling sources using closure-compiler.jar</description>
     <tags>javascript google closure</tags>
