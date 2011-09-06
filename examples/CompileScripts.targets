@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="Default">
+
+  <UsingTask
+    TaskName="GoogleClosure.MSBuild.CompileScripts"
+    AssemblyFile="[GoogleClosure.dll]" 
+  />
+  
+  <PropertyGroup>
+    <GoogleClosureCompiler>$(MSBuildProjectDirectory)\closure-compiler\compiler.jar</GoogleClosureCompiler>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Roots Include="[path to closure-library\closure\goog\]" />
+    <Roots Include="[path to closure-library\third_party\closure\goog\]" />
+    <Roots Include="[path to other root]" />
+    <Namespaces Include="[namespaces to compile]" />
+  </ItemGroup>
+
+  <Target Name="Default" >
+
+    <CompileScripts
+      Roots="@(Roots)"
+      Namespaces="@(Namespaces)"
+      CompilerJar="$(GoogleClosureCompiler)"
+      CompilerFlags="--compilation_level=ADVANCED_OPTIMIZATIONS --js_output_file=[output from compilation]"
+    />
+    
+  </Target>
+
+
+
+
+</Project>
