@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClosureCompiler.cs" />
+    <Compile Include="CompilationResult.cs" />
     <Compile Include="DirectoryScanner.cs" />
     <Compile Include="DependencyTree.cs" />
     <Compile Include="DependencyWriter.cs" />

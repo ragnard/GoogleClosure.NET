@@ -7,7 +7,8 @@ using Microsoft.Build.Utilities;
 
 namespace GoogleClosure.MSBuild
 {
-    public class CompileScripts : Task
+    //public class CompileScripts : Task
+    public class CompileScripts : AppDomainIsolatedTask
     {
         [Required]
         public ITaskItem[] Roots { get; set; }
@@ -61,7 +62,9 @@ namespace GoogleClosure.MSBuild
             }
 
             var compiler = new ClosureCompiler(CompilerJar, JavaPath);
-
+            compiler.OnStandardErrorWrite = line => Log.LogWarning(line);
+            compiler.OnStandardOutputWrite = line => Log.LogMessage(line);
+            
             Log.LogMessage("Executing compiler");
             Log.LogMessage("- Compiler: '{0}'", CompilerJar);
 
@@ -75,7 +78,16 @@ namespace GoogleClosure.MSBuild
                 Log.LogMessage("- Compiler flags: '{0}'", CompilerFlags);
             }
 
-            compiler.Compile(dependencies.Select(x => x.Path), CompilerFlags);
+            var result = compiler.Compile(dependencies.Select(x => x.Path), CompilerFlags);
+
+            foreach(var error in result.Errors)
+            {
+                Log.LogError("GoogleClosure Compiler", null, null, error.File, error.LineNumber, 0, 0, 0, error.Message);
+            }
+            foreach (var warning in result.Warnings)
+            {
+                Log.LogWarning("GoogleClosure Compiler", null, null, warning.File, warning.LineNumber, 0, 0, 0, warning.Message);
+            }
 
             return true;
         }

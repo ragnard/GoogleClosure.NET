@@ -15,6 +15,9 @@ namespace GoogleClosure
         public string JarPath { get; set; }
         public string JavaPath { get; set; }
 
+        public Action<string> OnStandardOutputWrite { get; set; }
+        public Action<string> OnStandardErrorWrite { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -31,31 +34,57 @@ namespace GoogleClosure
         /// </summary>
         /// <param name="sourceFiles"></param>
         /// <param name="compilerFlags"></param>
-        public void Compile(IEnumerable<string> sourceFiles, string compilerFlags = null)
+        public CompilationResult Compile(IEnumerable<string> sourceFiles, string compilerFlags = null)
         {
-            var process = new Process
+            using (var process = CreateProcess(sourceFiles, compilerFlags))
+            {
+                Console.WriteLine("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
+
+                process.Start();
+
+                if (!process.WaitForExit((int)TimeSpan.FromMinutes(1).TotalMilliseconds))
+                {
+                    throw new Exception("Timeout");
+                }
+
+                var output = process.StandardError.ReadToEnd();
+                var isSuccesful = process.ExitCode != 0;
+                
+                return CompilationResult.CreateFrom(output, isSuccesful);
+            }
+        }
+
+        private Process CreateProcess(IEnumerable<string> sourceFiles, string compilerFlags)
+        {
+            return new Process
             {
                 StartInfo =
                 {
                     FileName = JavaPath,
                     Arguments = BuildArguments(sourceFiles, compilerFlags),
-                    CreateNoWindow = false,
-                    UseShellExecute = false
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    WindowStyle = ProcessWindowStyle.Hidden
                 }
             };
+        }
 
-            Console.WriteLine("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
-
-            process.Start();
-
-            if (!process.WaitForExit((int)TimeSpan.FromMinutes(1).TotalMilliseconds))
+        void process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            if (OnStandardErrorWrite != null && !String.IsNullOrWhiteSpace(e.Data))
             {
-                throw new Exception("Timeout");
+                OnStandardErrorWrite(e.Data);
             }
+        }
 
-            if(process.ExitCode != 0)
+        void process_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            if (OnStandardOutputWrite != null && !String.IsNullOrWhiteSpace(e.Data))
             {
-                throw new Exception(string.Format("Compiler exited with code '{0}'", process.ExitCode));
+                OnStandardOutputWrite(e.Data);
             }
         }
 
@@ -68,7 +97,7 @@ namespace GoogleClosure
             sb.Append(" ");
             sb.Append(String.Join(" ", sourceFiles.Select(x => "--js \"" + x + "\"")));
 
-            if(compilerFlags != null)
+            if (compilerFlags != null)
             {
                 sb.Append(" " + compilerFlags);
             }
