@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>Google Closure Demo</title>
+  <!-- 
+    When using the compiled version of the application, we only need to reference
+    the single output file.
+    
+    This file is created by the 'CompileDemo' task in GoogleClosure.targets.
+  -->
+  <script src="Scripts/demo.js"></script>
+</head>
+<body>
+  
+  <form id="searchForm" action="http://api.flickr.com/services/feeds/photos_public.gne">
+    <span>Tags: </span>
+    <input id="tagsInput" name="tags" type="text" value="tortoise" />
+    <input id="searchButton" name="submit" type="submit" value="Search"/>
+  </form>
+  
+  <div id="resultDiv"></div>
+  
+  <script>
+    demo.initialize();
+  </script>
+
+</body>
+</html>

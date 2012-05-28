@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>Google Closure Demo</title>
+  <!-- 
+    We always need to reference base.js first. It provides the basic
+    functionality such as depdency management and namespaces. It also
+    loads the dependency file for the whole closure-library (goog/deps.js). 
+  -->
+  <script src="Scripts/closure-library/closure/goog/base.js"></script>
+  
+  <!--
+    We then reference the dependency file for the demo app. This file
+    is created by the 'CreateDemoDependencyFile' task in GoogleClosure.targets
+    every time the project is built.
+  -->
+  <script src="Scripts/demo/deps.js"></script>
+
+  <!-- 
+    We can now call goog.require to load any namespace or class that we have
+    made Google Closure aware about using dependency files (or manual calls to
+    goog.addDependency).
+    
+    In this case, we require the 'demo' namespace, so we can call the 
+    demo.initialize() function to boostrap our application.
+    -->
+  <script>
+    goog.require('demo');
+  </script>
+</head>
+<body>
+  
+  <form id="searchForm" action="http://api.flickr.com/services/feeds/photos_public.gne">
+    <span>Tags: </span>
+    <input id="tagsInput" name="tags" type="text" value="tortoise" />
+    <input id="searchButton" name="submit" type="submit" value="Search"/>
+  </form>
+  
+  <div id="resultDiv"></div>
+  
+  <script>
+    demo.initialize();
+  </script>
+
+</body>
+</html>

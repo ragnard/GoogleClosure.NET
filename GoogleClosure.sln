@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleClosure", "GoogleClos
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleClosure.Test", "GoogleClosure.Test\GoogleClosure.Test.csproj", "{D4BC0021-3D5D-4CBD-A3E0-74982D62FF16}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleClosure.Demo", "GoogleClosure.Demo\GoogleClosure.Demo.csproj", "{53334F45-9792-4942-B4CD-0A414F08C5E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{D4BC0021-3D5D-4CBD-A3E0-74982D62FF16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4BC0021-3D5D-4CBD-A3E0-74982D62FF16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4BC0021-3D5D-4CBD-A3E0-74982D62FF16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53334F45-9792-4942-B4CD-0A414F08C5E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53334F45-9792-4942-B4CD-0A414F08C5E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53334F45-9792-4942-B4CD-0A414F08C5E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53334F45-9792-4942-B4CD-0A414F08C5E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

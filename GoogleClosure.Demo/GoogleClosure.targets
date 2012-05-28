@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" >
+
+  <UsingTask
+    TaskName="GoogleClosure.MSBuild.CompileScripts"
+    AssemblyFile="$(MSBuildProjectDirectory)\bin\GoogleClosure.dll"
+  />
+
+  <UsingTask
+    TaskName="GoogleClosure.MSBuild.WriteDependencies"
+    AssemblyFile="$(MSBuildProjectDirectory)\bin\GoogleClosure.dll"
+  />
+
+  <PropertyGroup>
+    <ScriptsRootDir>$(MSBuildProjectDirectory)\Scripts</ScriptsRootDir>
+
+    <GoogleClosureLibraryDir>$(ScriptsRootDir)\closure-library</GoogleClosureLibraryDir>
+    <GoogleClosureLibraryBase>$(GoogleClosureLibraryDir)\closure\goog</GoogleClosureLibraryBase>
+    <GoogleClosureLibraryThirdParty>$(GoogleClosureLibraryDir)\third_party\closure\goog</GoogleClosureLibraryThirdParty>
+    <GoogleClosureCompilerJar>$(MSBuildProjectDirectory)\tools\closure-compiler\compiler.jar</GoogleClosureCompilerJar>
+
+    <DemoScriptsDir>$(ScriptsRootDir)\demo</DemoScriptsDir>
+    <DemoScriptsDepsFile>$(DemoScriptsDir)\deps.js</DemoScriptsDepsFile>
+    <DemoCompiledFile>$(ScriptsRootDir)\demo.js</DemoCompiledFile>
+    <DemoSourceMapFile>$(ScriptsRootDir)\demo.js.map</DemoSourceMapFile>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+
+    <AllDemoJavaScriptFiles Include="$(DemoScriptsDir)\**\*.js" Exclude="$(DemoScriptsDepsFile)"/>
+
+    <GoogleClosureRootDirs Include="$(GoogleClosureLibraryBase)" />
+    <GoogleClosureRootDirs Include="$(GoogleClosureLibraryThirdParty)" />
+    <GoogleClosureRootDirs Include="$(DemoScriptsDir)" />
+
+    <NamespacesToCompile Include="demo" />
+
+    <InputDependencies Include="@(AllDemoJavaScriptFiles)" />
+
+  </ItemGroup>
+
+
+  <Target Name="CreateDemoDependencyFile" Inputs="@(AllDemoJavaScriptFiles)" Outputs="$(DemoScriptsDepsFile)">
+    <WriteDependencies
+      ClosureBasePath="$(GoogleClosureLibraryBase)"
+      Paths="$(DemoScriptsDir)"
+      Output="$(DemoScriptsDepsFile)"
+    />
+  </Target>
+
+  <Target Name="CompileDemo" Inputs="@(InputDependencies)" Outputs="$(DemoCompiledFile);$(DemoSourceMapFile)">
+    <CompileScripts
+      Roots="@(GoogleClosureRootDirs)"
+      Namespaces="@(NamespacesToCompile)"
+      OutputFile="$(DemoCompiledFile)"
+      OutputSourceMapFile="$(DemoSourceMapFile)"
+      CompilerJar="$(GoogleClosureCompilerJar)"
+      CompilationLevel="Advanced"
+    />
+    <WriteLinesToFile File="$(DemoCompiledFile)" Overwrite="false" Lines="//@ sourceMappingURL=/Scripts/demo.js.map" />
+  </Target>
+ 
+</Project>
