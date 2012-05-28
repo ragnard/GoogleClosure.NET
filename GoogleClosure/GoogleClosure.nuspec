@@ -8,7 +8,7 @@
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseUrl>
     <projectUrl>http://github.com/ragnard/GoogleClosure</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Tools for using Google Closure on the .NET platofrm. Includes MSBuild tasks for generating dependency files, and compilation. Basically a port of the functionality provided by closurebuilder.py and depswriter.py</description>
+    <description>Tools for using Google Closure on the .NET platform. Includes MSBuild tasks for generating dependency files, and compilation. Basically a C# port of the functionality provided by closurebuilder.py and depswriter.py with a few twists.</description>
     <tags>javascript google closure</tags>
   </metadata>
   <files>
