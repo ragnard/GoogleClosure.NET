@@ -24,7 +24,7 @@ namespace GoogleClosure
     public class CircularDependencyException : Exception
     {
         public CircularDependencyException(IEnumerable<string> traversalPath)
-            : base(string.Format("Circular dependency: {0}", String.Join(" -> ", traversalPath)))
+            : base(string.Format("Circular dependency detected: {0}", String.Join(" -> ", traversalPath)))
         { }
     }
 

@@ -23,7 +23,10 @@
       Roots="@(Roots)"
       Namespaces="@(Namespaces)"
       CompilerJar="$(GoogleClosureCompiler)"
-      CompilerFlags="--compilation_level=ADVANCED_OPTIMIZATIONS --js_output_file=[output from compilation]"
+      CompilationLevel="[Whitespace|Simple|Advanced]"
+      OutputFile="[path to output file]"
+      OutputSourceMapFile="[path to source map file to output]"
+      AdditionalCompilerFlags="[any additional compiler flags]" 
     />
     
   </Target>

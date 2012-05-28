@@ -26,7 +26,28 @@ namespace GoogleClosure
         public ClosureCompiler(string jarPath, string javaPath = null)
         {
             JarPath = jarPath;
-            JavaPath = javaPath ?? TryDiscoverJavaRuntimePath();
+            JavaPath = DetermineJavaExecutablePath(javaPath);
+        }
+
+        private static string DetermineJavaExecutablePath(string javaPath)
+        {
+            if(javaPath != null)
+            {
+                return javaPath;
+            }
+            else
+            {
+                var discoveredPath = JavaExecutableDiscovery.DisoverJavaExecutablePath();
+
+                if(discoveredPath == null)
+                {
+                    throw new ApplicationException(
+                        string.Format(
+                            "Unable to find a suitable Java executable to use. Please set JAVA_HOME appriopriately or specify one manually"));
+                }
+
+                return discoveredPath;
+            }
         }
 
         /// <summary>
@@ -34,13 +55,26 @@ namespace GoogleClosure
         /// </summary>
         /// <param name="sourceFiles"></param>
         /// <param name="compilerFlags"></param>
-        public CompilationResult Compile(IEnumerable<string> sourceFiles, string compilerFlags = null)
+        /// <param name="outputStream"> </param>
+        public CompilationResult Compile(IEnumerable<string> sourceFiles, string compilerFlags = null, Stream outputStream = null)
         {
             using (var process = CreateProcess(sourceFiles, compilerFlags))
             {
                 Console.WriteLine("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
 
                 process.Start();
+
+                if (outputStream != null)
+                {
+                    while (!process.StandardOutput.EndOfStream)
+                    {
+                        process.StandardOutput.BaseStream.CopyTo(outputStream);
+                    }
+                }
+                else
+                {
+                    process.StandardOutput.ReadToEnd();
+                }
 
                 if (!process.WaitForExit((int)TimeSpan.FromMinutes(1).TotalMilliseconds))
                 {
@@ -49,7 +83,7 @@ namespace GoogleClosure
 
                 var output = process.StandardError.ReadToEnd();
                 var isSuccesful = process.ExitCode != 0;
-                
+
                 return CompilationResult.CreateFrom(output, isSuccesful);
             }
         }
@@ -105,29 +139,6 @@ namespace GoogleClosure
             return sb.ToString();
         }
 
-        /// <summary>
-        /// Simple, stupid, brute-force way to try and find a suitable <code>java.exe</code>
-        /// </summary>
-        /// <returns></returns>
-        private static string TryDiscoverJavaRuntimePath()
-        {
-            return GetPotentialJavaExecutables().First(File.Exists);
-        }
-
-        private static IEnumerable<string> GetPotentialJavaExecutables()
-        {
-            var jreVersions = new[] { "jre7", "jre6" };
-
-            return from directory in GetProgramFilesDirectories()
-                   from jre in jreVersions
-                   select Path.Combine(directory, "Java", jre, "bin", "java.exe");
-        }
-
-        private static IEnumerable<string> GetProgramFilesDirectories()
-        {
-            yield return Environment.GetEnvironmentVariable("ProgramW6432");
-            yield return Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-            yield return Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-        }
+       
     }
 }

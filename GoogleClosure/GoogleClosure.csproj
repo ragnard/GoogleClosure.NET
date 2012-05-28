@@ -49,13 +49,16 @@
     <Compile Include="DependencyTree.cs" />
     <Compile Include="DependencyWriter.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="JavaExecutableDiscovery.cs" />
     <Compile Include="MSBuild\CompileScripts.cs" />
     <Compile Include="MSBuild\WriteDependencies.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AnalyzedSourceFile.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="examples\CompileScripts.targets" />
+    <None Include="examples\CompileScripts.targets">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="examples\WriteDependencies.targets" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
