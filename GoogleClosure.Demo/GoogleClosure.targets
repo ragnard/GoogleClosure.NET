@@ -22,7 +22,8 @@
     <DemoScriptsDir>$(ScriptsRootDir)\demo</DemoScriptsDir>
     <DemoScriptsDepsFile>$(DemoScriptsDir)\deps.js</DemoScriptsDepsFile>
     <DemoCompiledFile>$(ScriptsRootDir)\demo.js</DemoCompiledFile>
-    <DemoSourceMapFile>$(ScriptsRootDir)\demo.js.map</DemoSourceMapFile>
+    <DemoSourceMapFileName>demo.js.map</DemoSourceMapFileName>
+    <DemoSourceMapFile>$(ScriptsRootDir)\$(DemoSourceMapFileName)</DemoSourceMapFile>
 
   </PropertyGroup>
 
@@ -57,7 +58,7 @@
       CompilerJar="$(GoogleClosureCompilerJar)"
       CompilationLevel="Advanced"
     />
-    <WriteLinesToFile File="$(DemoCompiledFile)" Overwrite="false" Lines="//@ sourceMappingURL=$(DemoSourceMapFile)" />
+    <WriteLinesToFile File="$(DemoCompiledFile)" Overwrite="false" Lines="//@ sourceMappingURL=$(DemoSourceMapFileName)" />
   </Target>
  
 </Project>
