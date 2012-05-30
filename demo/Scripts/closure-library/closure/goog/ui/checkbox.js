@@ -93,6 +93,7 @@ goog.ui.Checkbox.prototype.getChecked = function() {
 
 /**
  * @return {boolean} Whether the checkbox is checked.
+ * @override
  */
 goog.ui.Checkbox.prototype.isChecked = function() {
   return this.checked_ == goog.ui.Checkbox.State.CHECKED;
@@ -118,6 +119,7 @@ goog.ui.Checkbox.prototype.isUndetermined = function() {
 /**
  * Sets the checked state of the checkbox.
  * @param {?boolean} checked The checked state to set.
+ * @override
  */
 goog.ui.Checkbox.prototype.setChecked = function(checked) {
   if (checked != this.checked_) {
@@ -172,7 +174,7 @@ goog.ui.Checkbox.prototype.toggle = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 goog.ui.Checkbox.prototype.enterDocument = function() {
   goog.base(this, 'enterDocument');
   if (this.isHandleMouseEvents()) {
@@ -215,7 +217,7 @@ goog.ui.Checkbox.prototype.enterDocument = function() {
  * focusable. In particular this fails in Chrome.
  * Note: in general tabIndex=-1 will prevent from keyboard focus but enables
  * mouse focus, however in this case the control class prevents mouse focus.
- * @inheritDoc
+ * @override
  */
 goog.ui.Checkbox.prototype.setEnabled = function(enabled) {
   goog.base(this, 'setEnabled', enabled);
@@ -243,7 +245,7 @@ goog.ui.Checkbox.prototype.handleClickOrSpace_ = function(e) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 goog.ui.Checkbox.prototype.handleKeyEventInternal = function(e) {
   if (e.keyCode == goog.events.KeyCodes.SPACE) {
     this.handleClickOrSpace_(e);

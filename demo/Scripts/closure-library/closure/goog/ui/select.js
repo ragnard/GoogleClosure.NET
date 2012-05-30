@@ -17,6 +17,7 @@
  * with semantics similar to the native HTML <code>&lt;select&gt;</code>
  * element.
  *
+ * @author attila@google.com (Attila Bodis)
  * @see ../demos/select.html
  */
 
@@ -38,6 +39,9 @@ goog.require('goog.ui.registry');
  * A selection control.  Extends {@link goog.ui.MenuButton} by composing a
  * menu with a selection model, and automatically updating the button's caption
  * based on the current selection.
+ *
+ * Select fires the following events:
+ *   CHANGE - after selection changes.
  *
  * @param {goog.ui.ControlContent} caption Default caption or existing DOM
  *     structure to display as the button's caption when nothing is selected.
@@ -79,7 +83,7 @@ goog.ui.Select.prototype.defaultCaption_ = null;
  */
 goog.ui.Select.prototype.enterDocument = function() {
   goog.ui.Select.superClass_.enterDocument.call(this);
-  this.updateCaption_();
+  this.updateCaption();
   this.listenToSelectionModelEvents_();
   // Need to set HASPOPUP to false since it's set to true in the parent class.
   goog.dom.a11y.setState(this.getElement(),
@@ -105,7 +109,7 @@ goog.ui.Select.prototype.decorateInternal = function(element) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 goog.ui.Select.prototype.disposeInternal = function() {
   goog.ui.Select.superClass_.disposeInternal.call(this);
 
@@ -128,7 +132,11 @@ goog.ui.Select.prototype.disposeInternal = function() {
  */
 goog.ui.Select.prototype.handleMenuAction = function(e) {
   this.setSelectedItem(/** @type {goog.ui.MenuItem} */ (e.target));
-  goog.ui.Select.superClass_.handleMenuAction.call(this, e);
+  goog.base(this, 'handleMenuAction', e);
+
+  // NOTE(user): We should not stop propagation and then fire
+  // our own ACTION event. Fixing this without breaking anyone
+  // relying on this event is hard though.
   e.stopPropagation();
   this.dispatchEvent(goog.ui.Component.EventType.ACTION);
 };
@@ -143,7 +151,7 @@ goog.ui.Select.prototype.handleMenuAction = function(e) {
 goog.ui.Select.prototype.handleSelectionChange = function(e) {
   var item = this.getSelectedItem();
   goog.ui.Select.superClass_.setValue.call(this, item && item.getValue());
-  this.updateCaption_();
+  this.updateCaption();
 };
 
 
@@ -169,7 +177,8 @@ goog.ui.Select.prototype.setMenu = function(menu) {
     if (menu) {
       if (this.selectionModel_) {
         menu.forEachChild(function(child, index) {
-          this.setCorrectAriaRole_(child);
+          this.setCorrectAriaRole_(
+              /** @type {goog.ui.MenuItem|goog.ui.MenuSeparator} */ (child));
           this.selectionModel_.addItem(child);
         }, this);
       } else {
@@ -198,17 +207,18 @@ goog.ui.Select.prototype.getDefaultCaption = function() {
  */
 goog.ui.Select.prototype.setDefaultCaption = function(caption) {
   this.defaultCaption_ = caption;
-  this.updateCaption_();
+  this.updateCaption();
 };
 
 
 /**
  * Adds a new menu item at the end of the menu.
- * @param {goog.ui.MenuItem|goog.ui.MenuSeparator} item Menu item to add to the
- *     menu.
+ * @param {goog.ui.Control} item Menu item to add to the menu.
+ * @override
  */
 goog.ui.Select.prototype.addItem = function(item) {
-  this.setCorrectAriaRole_(item);
+  this.setCorrectAriaRole_(
+      /** @type {goog.ui.MenuItem|goog.ui.MenuSeparator} */ (item));
   goog.ui.Select.superClass_.addItem.call(this, item);
 
   if (this.selectionModel_) {
@@ -226,7 +236,8 @@ goog.ui.Select.prototype.addItem = function(item) {
  * @param {number} index Index at which to insert the menu item.
  */
 goog.ui.Select.prototype.addItemAt = function(item, index) {
-  this.setCorrectAriaRole_(item);
+  this.setCorrectAriaRole_(
+      /** @type {goog.ui.MenuItem|goog.ui.MenuSeparator} */ (item));
   goog.ui.Select.superClass_.addItemAt.call(this, item, index);
 
   if (this.selectionModel_) {
@@ -239,7 +250,8 @@ goog.ui.Select.prototype.addItemAt = function(item, index) {
 
 /**
  * Removes an item from the menu and disposes it.
- * @param {goog.ui.MenuItem} item The menu item to remove.
+ * @param {goog.ui.MenuItem|goog.ui.MenuSeparator} item The menu item to remove.
+ * @override
  */
 goog.ui.Select.prototype.removeItem = function(item) {
   goog.ui.Select.superClass_.removeItem.call(this, item);
@@ -270,7 +282,12 @@ goog.ui.Select.prototype.removeItemAt = function(index) {
  */
 goog.ui.Select.prototype.setSelectedItem = function(item) {
   if (this.selectionModel_) {
+    var prevItem = this.getSelectedItem();
     this.selectionModel_.setSelectedItem(item);
+
+    if (item != prevItem) {
+      this.dispatchEvent(goog.ui.Component.EventType.CHANGE);
+    }
   }
 };
 
@@ -351,7 +368,8 @@ goog.ui.Select.prototype.createSelectionModel_ = function(opt_component) {
   this.selectionModel_ = new goog.ui.SelectionModel();
   if (opt_component) {
     opt_component.forEachChild(function(child, index) {
-      this.setCorrectAriaRole_(child);
+      this.setCorrectAriaRole_(
+          /** @type {goog.ui.MenuItem|goog.ui.MenuSeparator} */ (child));
       this.selectionModel_.addItem(child);
     }, this);
   }
@@ -375,9 +393,9 @@ goog.ui.Select.prototype.listenToSelectionModelEvents_ = function() {
  * Updates the caption to be shown in the select button.  If no option is
  * selected and a default caption is set, sets the caption to the default
  * caption; otherwise to the empty string.
- * @private
+ * @protected
  */
-goog.ui.Select.prototype.updateCaption_ = function() {
+goog.ui.Select.prototype.updateCaption = function() {
   var item = this.getSelectedItem();
   this.setContent(item ? item.getCaption() : this.defaultCaption_);
 };

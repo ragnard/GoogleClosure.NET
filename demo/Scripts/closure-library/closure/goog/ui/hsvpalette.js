@@ -20,6 +20,9 @@
  * palette. Without the styles from the demo css file, only a hex color label
  * and input field show up.
  *
+ * @author arv@google.com (Erik Arvidsson)
+ * @author smcbride@google.com (Sean McBride)
+ * @author manucornet@google.com (Manu Cornet)
  * @see ../demos/hsvpalette.html
  */
 
@@ -33,6 +36,7 @@ goog.require('goog.events.Event');
 goog.require('goog.events.EventType');
 goog.require('goog.events.InputHandler');
 goog.require('goog.style');
+goog.require('goog.style.bidi');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Component.EventType');
 goog.require('goog.userAgent');
@@ -259,13 +263,14 @@ goog.ui.HsvPalette.prototype.setHsv_ = function(opt_hue,
  * structure they build is fairly complicated.
  * @param {Element} element Element to decorate.
  * @return {boolean} Returns always false.
+ * @override
  */
 goog.ui.HsvPalette.prototype.canDecorate = function(element) {
   return false;
 };
 
 
-/** @inheritDoc */
+/** @override */
 goog.ui.HsvPalette.prototype.createDom = function() {
   var dom = this.getDomHelper();
   var noalpha = (goog.userAgent.IE && !goog.userAgent.isVersion('7')) ?
@@ -273,32 +278,32 @@ goog.ui.HsvPalette.prototype.createDom = function() {
   var element = dom.createDom(goog.dom.TagName.DIV,
       this.class_ + noalpha,
       dom.createDom(goog.dom.TagName.DIV,
-            goog.getCssName(this.class_, 'hs-backdrop')),
+          goog.getCssName(this.class_, 'hs-backdrop')),
       this.hsImageEl_ = dom.createDom(goog.dom.TagName.DIV,
-            goog.getCssName(this.class_, 'hs-image')),
-      this.hsHandleEl_ = dom.createDom(goog.dom.TagName.DIV,
-            goog.getCssName(this.class_, 'hs-handle')),
+          goog.getCssName(this.class_, 'hs-image'),
+          this.hsHandleEl_ = dom.createDom(goog.dom.TagName.DIV,
+              goog.getCssName(this.class_, 'hs-handle'))),
       this.vImageEl_ = dom.createDom(goog.dom.TagName.DIV,
-            goog.getCssName(this.class_, 'v-image')),
+          goog.getCssName(this.class_, 'v-image')),
       this.vHandleEl_ = dom.createDom(goog.dom.TagName.DIV,
-            goog.getCssName(this.class_, 'v-handle')),
+          goog.getCssName(this.class_, 'v-handle')),
       this.swatchEl_ = dom.createDom(goog.dom.TagName.DIV,
-            goog.getCssName(this.class_, 'swatch')),
+          goog.getCssName(this.class_, 'swatch')),
       dom.createDom('label', null,
           //dom.createDom('span', null, 'Hex color '),
           this.inputEl_ = dom.createDom('input',
-              {'class': goog.getCssName(this.class_, 'input'), 'type': 'text'})
-      )
-  );
+              {'class': goog.getCssName(this.class_, 'input'),
+               'type': 'text', 'dir': 'ltr'})));
   this.setElementInternal(element);
 
-  // TODO(user): Set tabIndex
+  // TODO(arv): Set tabIndex
 };
 
 
 /**
  * Renders the color picker inside the provided element. This will override the
  * current content of the element.
+ * @override
  */
 goog.ui.HsvPalette.prototype.enterDocument = function() {
   goog.ui.HsvPalette.superClass_.enterDocument.call(this);
@@ -322,7 +327,7 @@ goog.ui.HsvPalette.prototype.enterDocument = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 goog.ui.HsvPalette.prototype.disposeInternal = function() {
   goog.ui.HsvPalette.superClass_.disposeInternal.call(this);
 
@@ -352,14 +357,25 @@ goog.ui.HsvPalette.prototype.updateUi_ = function() {
     var s = this.hsv_[1];
     var v = this.hsv_[2];
 
-    var left = this.hsImageEl_.offsetLeft -
-        Math.floor(this.hsHandleEl_.offsetWidth / 2) +
-        this.hsImageEl_.offsetWidth * h;
-    this.hsHandleEl_.style.left = left + 'px';
-    var top = this.hsImageEl_.offsetTop -
-        Math.floor(this.hsHandleEl_.offsetHeight / 2) +
-        this.hsImageEl_.offsetHeight * (1 - s);
-    this.hsHandleEl_.style.top = top + 'px';
+    var left = this.hsImageEl_.offsetWidth * h;
+
+    // We don't use a flipped gradient image in RTL, so we need to flip the
+    // offset in RTL so that it still hovers over the correct color on the
+    // gradiant.
+    if (this.isRightToLeft()) {
+      left = this.hsImageEl_.offsetWidth - left;
+    }
+
+    // We also need to account for the handle size.
+    var handleOffset = Math.ceil(this.hsHandleEl_.offsetWidth / 2);
+    left -= handleOffset;
+
+    var top = this.hsImageEl_.offsetHeight * (1 - s);
+    // Account for the handle size.
+    top -= Math.ceil(this.hsHandleEl_.offsetHeight / 2);
+
+    goog.style.bidi.setPosition(this.hsHandleEl_, left, top,
+        this.isRightToLeft());
 
     top = this.vImageEl_.offsetTop -
         Math.floor(this.vHandleEl_.offsetHeight / 2) +

@@ -58,6 +58,7 @@ goog.ui.BidiInput.prototype.inputHandler_ = null;
  * Overrides {@link goog.ui.Component#decorateInternal}.  Considered protected.
  * @param {Element} element  Element (HTML Input element) to decorate.
  * @protected
+ * @override
  */
 goog.ui.BidiInput.prototype.decorateInternal = function(element) {
   goog.ui.BidiInput.superClass_.decorateInternal.call(this, element);
@@ -68,6 +69,7 @@ goog.ui.BidiInput.prototype.decorateInternal = function(element) {
 /**
  * Creates the element for the text input.
  * @protected
+ * @override
  */
 goog.ui.BidiInput.prototype.createDom = function() {
   this.setElementInternal(
@@ -154,7 +156,7 @@ goog.ui.BidiInput.prototype.getValue = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 goog.ui.BidiInput.prototype.disposeInternal = function() {
   if (this.inputHandler_) {
     goog.events.removeAll(this.inputHandler_);

@@ -18,6 +18,7 @@ See the COPYING file for details.
   goog.require('goog.events.EventTarget');
   goog.require('goog.events.EventType');
   goog.require('goog.functions');
+  goog.require('goog.testing.PropertyReplacer');
   goog.require('goog.testing.jsunit');
   goog.require('goog.testing.recordFunction');
 
@@ -27,11 +28,16 @@ See the COPYING file for details.
 <body>
 <script>
   var originalHandleBrowserEvent = goog.events.handleBrowserEvent_;
+  var propertyReplacer;
+
+  function setUp() {
+    propertyReplacer = new goog.testing.PropertyReplacer();
+  }
 
   function tearDown() {
     goog.events.handleBrowserEvent_ = originalHandleBrowserEvent;
-    goog.events.pools.setProxyCallbackFunction(originalHandleBrowserEvent);
     goog.events.removeAll();
+    propertyReplacer.reset();
   }
 
   function testProtectBrowserEventEntryPoint() {
@@ -51,8 +57,6 @@ See the COPYING file for details.
             e instanceof goog.debug.ErrorHandler.ProtectedFunctionError);
       }
     };
-    goog.events.pools.setProxyCallbackFunction(
-        goog.events.handleBrowserEvent_);
 
     var bodyEl = document.body;
     goog.events.listen(bodyEl, goog.events.EventType.CLICK, function(e){
@@ -384,6 +388,36 @@ See the COPYING file for details.
     goog.debug.entryPointRegistry.monitorAll(monitor);
     assertTrue(monitor.wrap.getCallCount() >= 1);
     assertEquals(replacement, goog.events.handleBrowserEvent_);
+  }
+
+  // Fixes bug http://b/6434926
+  function testListenOnceHandlerDispatchCausingInfiniteLoop() {
+    var target = new goog.events.EventTarget();
+
+    var handleFoo = goog.testing.recordFunction(function() {
+      target.dispatchEvent('foo');
+    });
+
+    goog.events.listenOnce(target, 'foo', handleFoo);
+
+    target.dispatchEvent('foo');
+
+    assertEquals('Handler should be called only once.',
+                 1, handleFoo.getCallCount());
+  }
+
+  function testCreationStack() {
+    if (!new Error().stack)
+      return;
+    propertyReplacer.replace(goog.events.Listener, 'ENABLE_MONITORING', true);
+
+    var div = document.createElement('div');
+    var key = goog.events.listen(div, goog.events.EventType.CLICK, goog.nullFunction);
+    var listenerStack = goog.events.listeners_[key].creationStack;
+
+    // Check that the name of this test function occurs in the stack trace.
+    assertContains('testCreationStack', listenerStack);
+    goog.events.unlistenByKey(key);
   }
 </script>
 </body>

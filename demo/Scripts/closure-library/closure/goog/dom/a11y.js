@@ -396,7 +396,6 @@ goog.dom.a11y.LivePriority = {
  */
 goog.dom.a11y.setRole = function(element, roleName) {
   element.setAttribute('role', roleName);
-  element.roleName = roleName;
 };
 
 
@@ -406,7 +405,7 @@ goog.dom.a11y.setRole = function(element, roleName) {
  * @return {string} rolename.
  */
 goog.dom.a11y.getRole = function(element) {
-  return element.roleName || '';
+  return element.getAttribute('role') || '';
 };
 
 
@@ -496,7 +495,7 @@ goog.dom.a11y.Announcer = function(domHelper) {
 goog.inherits(goog.dom.a11y.Announcer, goog.Disposable);
 
 
-/** @inheritDoc */
+/** @override */
 goog.dom.a11y.Announcer.prototype.disposeInternal = function() {
   goog.object.forEach(
       this.liveRegions_, this.domHelper_.removeNode, this.domHelper_);

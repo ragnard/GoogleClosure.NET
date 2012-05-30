@@ -230,6 +230,7 @@ goog.ui.ColorPicker.prototype.setFocusable = function(focusable) {
  * structure they build is fairly complicated.
  * @param {Element} element Element to decorate.
  * @return {boolean} Returns always false.
+ * @override
  */
 goog.ui.ColorPicker.prototype.canDecorate = function(element) {
   return false;
@@ -250,7 +251,7 @@ goog.ui.ColorPicker.prototype.enterDocument = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 goog.ui.ColorPicker.prototype.disposeInternal = function() {
   goog.ui.ColorPicker.superClass_.disposeInternal.call(this);
   if (this.colorPalette_) {

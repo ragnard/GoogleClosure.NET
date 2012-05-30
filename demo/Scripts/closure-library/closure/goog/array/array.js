@@ -62,7 +62,7 @@ goog.array.peek = function(array) {
 goog.array.ARRAY_PROTOTYPE_ = Array.prototype;
 
 
-// NOTE(user): Since most of the array functions are generic it allows you to
+// NOTE(arv): Since most of the array functions are generic it allows you to
 // pass an array-like object. Strings have a length and are considered array-
 // like. However, the 'in' operator does not work on strings so we cannot just
 // use the array path even if the browser supports indexing into strings. We
@@ -161,14 +161,14 @@ goog.array.lastIndexOf = goog.NATIVE_ARRAY_PROTOTYPES &&
  *
  * @param {goog.array.ArrayLike} arr Array or array like object over
  *     which to iterate.
- * @param {Function} f The function to call for every element. This function
- *     takes 3 arguments (the element, the index and the array). The return
- *     value is ignored. The function is called only for indexes of the array
- *     which have assigned values; it is not called for indexes which have
- *     been deleted or which have never been assigned values.
- *
- * @param {Object=} opt_obj The object to be used as the value of 'this'
+ * @param {?function(this: T, ...)} f The function to call for every element.
+ *     This function takes 3 arguments (the element, the index and the array).
+ *     The return value is ignored. The function is called only for indexes of
+ *     the array which have assigned values; it is not called for indexes which
+ *     have been deleted or which have never been assigned values.
+ * @param {T=} opt_obj The object to be used as the value of 'this'
  *     within f.
+ * @template T
  */
 goog.array.forEach = goog.NATIVE_ARRAY_PROTOTYPES &&
                      goog.array.ARRAY_PROTOTYPE_.forEach ?
@@ -685,25 +685,6 @@ goog.array.concat = function(var_args) {
 
 
 /**
- * Does a shallow copy of an array.
- * @param {goog.array.ArrayLike} arr  Array or array-like object to clone.
- * @return {!Array} Clone of the input array.
- */
-goog.array.clone = function(arr) {
-  if (goog.isArray(arr)) {
-    return goog.array.concat(/** @type {!Array} */ (arr));
-  } else { // array like
-    // Concat does not work with non arrays.
-    var rv = [];
-    for (var i = 0, len = arr.length; i < len; i++) {
-      rv[i] = arr[i];
-    }
-    return rv;
-  }
-};
-
-
-/**
  * Converts an object to an array.
  * @param {goog.array.ArrayLike} object  The object to convert to an array.
  * @return {!Array} The object converted into an array. If object has a
@@ -712,15 +693,28 @@ goog.array.clone = function(arr) {
  *     have a length property, an empty array will be returned.
  */
 goog.array.toArray = function(object) {
-  if (goog.isArray(object)) {
-    // This fixes the JS compiler warning and forces the Object to an Array type
-    return goog.array.concat(/** @type {!Array} */ (object));
+  var length = object.length;
+
+  // If length is not a number the following it false. This case is kept for
+  // backwards compatibility since there are callers that pass objects that are
+  // not array like.
+  if (length > 0) {
+    var rv = new Array(length);
+    for (var i = 0; i < length; i++) {
+      rv[i] = object[i];
+    }
+    return rv;
   }
-  // Clone what we hope to be an array-like object to an array.
-  // We could check isArrayLike() first, but no check we perform would be as
-  // reliable as simply making the call.
-  return goog.array.clone(/** @type {Array} */ (object));
+  return [];
 };
+
+
+/**
+ * Does a shallow copy of an array.
+ * @param {goog.array.ArrayLike} arr  Array or array-like object to clone.
+ * @return {!Array} Clone of the input array.
+ */
+goog.array.clone = goog.array.toArray;
 
 
 /**
@@ -987,7 +981,7 @@ goog.array.binarySearch_ = function(arr, compareFn, isEvaluator, opt_target,
  *     first argument is less than, equal to, or greater than the second.
  */
 goog.array.sort = function(arr, opt_compareFn) {
-  // TODO(user): Update type annotation since null is not accepted.
+  // TODO(arv): Update type annotation since null is not accepted.
   goog.asserts.assert(arr.length != null);
 
   goog.array.ARRAY_PROTOTYPE_.sort.call(
@@ -1229,7 +1223,7 @@ goog.array.bucket = function(array, sorter) {
  *
  * @param {*} value The value to repeat.
  * @param {number} n The repeat count.
- * @return {!Array.<*>} An array with the repeated value.
+ * @return {!Array} An array with the repeated value.
  */
 goog.array.repeat = function(value, n) {
   var array = [];

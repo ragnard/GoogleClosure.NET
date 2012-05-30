@@ -7,6 +7,7 @@ Use of this source code is governed by the Apache License, Version 2.0.
 See the COPYING file for details.
 -->
 <!--
+Author: attila@google.com (Attila Bodis)
 -->
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -55,22 +56,22 @@ See the COPYING file for details.
        'goog-button']
     ];
 
-    /** {@inheritDoc} */
+    /** {@override} */
     TestRenderer.prototype.getAriaRole = function() {
       return goog.dom.a11y.Role.BUTTON;
     };
 
-    /** {@inheritDoc} */
+    /** {@override} */
     TestRenderer.prototype.getCssClass = function() {
       return TestRenderer.CSS_CLASS;
     };
 
-    /** {@inheritDoc} */
+    /** {@override} */
     TestRenderer.prototype.getStructuralCssClass = function() {
       return 'goog-base';
     };
 
-    /** {@inheritDoc} */
+    /** {@override} */
     TestRenderer.prototype.getIe6ClassCombinations = function() {
       return TestRenderer.IE6_CLASS_COMBINATIONS;
     };

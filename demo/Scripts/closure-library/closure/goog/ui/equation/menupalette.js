@@ -57,6 +57,7 @@ goog.ui.equation.MenuPalette.CSS_CLASS = 'ee-menu-palette';
  * @param {boolean=} opt_force If true, doesn't check whether the component
  *     already has the requested visibility, and doesn't dispatch any events.
  * @return {boolean} Whether the visibility was changed.
+ * @override
  */
 goog.ui.equation.MenuPalette.prototype.setVisible = function(
     visible, opt_force) {
@@ -78,7 +79,7 @@ goog.inherits(goog.ui.equation.MenuPaletteRenderer,
 goog.addSingletonGetter(goog.ui.equation.MenuPaletteRenderer);
 
 
-/** @inheritDoc */
+/** @override */
 goog.ui.equation.MenuPaletteRenderer.prototype.getCssClass =
     function() {
   return goog.ui.equation.MenuPalette.CSS_CLASS;

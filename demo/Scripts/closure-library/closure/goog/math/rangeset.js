@@ -21,6 +21,7 @@
  * This may be used, for example, to track the availability of sparse elements
  * in an array without iterating over the entire array.
  *
+ * @author brenneman@google.com (Shawn Brenneman)
  */
 
 goog.provide('goog.math.RangeSet');
@@ -56,6 +57,7 @@ goog.math.RangeSet = function() {
 if (goog.DEBUG) {
   /**
    * @return {string} A debug string in the form [[1, 5], [8, 9], [15, 30]].
+   * @override
    */
   goog.math.RangeSet.prototype.toString = function() {
     return '[' + this.ranges_.join(', ') + ']';
@@ -226,7 +228,7 @@ goog.math.RangeSet.prototype.containsValue = function(value) {
  *     either set.
  */
 goog.math.RangeSet.prototype.union = function(set) {
-  // TODO(user): A linear-time merge would be preferable if it is ever a
+  // TODO(brenneman): A linear-time merge would be preferable if it is ever a
   // bottleneck.
   set = set.clone();
 
@@ -235,6 +237,25 @@ goog.math.RangeSet.prototype.union = function(set) {
   }
 
   return set;
+};
+
+
+/**
+ * Subtracts the ranges of another set from this one, returning the result
+ * as a new RangeSet.
+ *
+ * @param {!goog.math.RangeSet} set The RangeSet to subtract.
+ * @return {!goog.math.RangeSet} A new RangeSet containing all values in this
+ *     set minus the values of the input set.
+ */
+goog.math.RangeSet.prototype.difference = function(set) {
+  var ret = this.clone();
+
+  for (var i = 0, a; a = set.ranges_[i]; i++) {
+    ret.remove(a);
+  }
+
+  return ret;
 };
 
 
@@ -250,14 +271,7 @@ goog.math.RangeSet.prototype.intersection = function(set) {
     return new goog.math.RangeSet();
   }
 
-  set = set.inverse(this.getBounds());
-  var r = this.clone();
-
-  for (var i = 0, a; a = set.ranges_[i]; i++) {
-    r.remove(a);
-  }
-
-  return r;
+  return this.difference(set.inverse(this.getBounds()));
 };
 
 
@@ -313,6 +327,18 @@ goog.math.RangeSet.prototype.inverse = function(range) {
   }
 
   return set;
+};
+
+
+/**
+ * @return {number} The sum of the lengths of ranges covered in the set.
+ */
+goog.math.RangeSet.prototype.coveredLength = function() {
+  return /** @type {number} */ (goog.array.reduce(
+      this.ranges_,
+      function(res, range) {
+        return res + range.end - range.start;
+      }, 0));
 };
 
 

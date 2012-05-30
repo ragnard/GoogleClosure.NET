@@ -23,6 +23,7 @@
  */
 
 goog.provide('goog.ui.Textarea');
+goog.provide('goog.ui.Textarea.EventType');
 
 goog.require('goog.Timer');
 goog.require('goog.events.EventType');
@@ -164,6 +165,15 @@ goog.ui.Textarea.prototype.borderBox_;
 
 
 /**
+ * Constants for event names.
+ * @enum {string}
+ */
+goog.ui.Textarea.EventType = {
+  RESIZE: 'resize'
+};
+
+
+/**
  * @return {number} The padding plus the border box height.
  * @private
  */
@@ -229,7 +239,7 @@ goog.ui.Textarea.prototype.getMaxHeight_ = function() {
 
 
 /**
- * Sets a minimum height for the textarea, and calls resize if rendered.
+ * Sets a maximum height for the textarea, and calls resize if rendered.
  * @param {number} height New maxHeight value.
  */
 goog.ui.Textarea.prototype.setMaxHeight = function(height) {
@@ -257,14 +267,14 @@ goog.ui.Textarea.prototype.getValue = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 goog.ui.Textarea.prototype.setContent = function(content) {
   goog.ui.Textarea.superClass_.setContent.call(this, content);
   this.resize();
 };
 
 
-/** @inheritDoc **/
+/** @override **/
 goog.ui.Textarea.prototype.setEnabled = function(enable) {
   goog.ui.Textarea.superClass_.setEnabled.call(this, enable);
   this.getElement().disabled = !enable;
@@ -281,8 +291,9 @@ goog.ui.Textarea.prototype.resize = function() {
 };
 
 
-/** @inheritDoc **/
+/** @override **/
 goog.ui.Textarea.prototype.enterDocument = function() {
+  goog.base(this, 'enterDocument');
   var textarea = this.getElement();
 
   // Eliminates the vertical scrollbar and changes the box-sizing mode for the
@@ -452,6 +463,7 @@ goog.ui.Textarea.prototype.grow_ = function(opt_e) {
   var shouldCallShrink = false;
   this.isResizing_ = true;
   var textarea = this.getElement();
+  var oldHeight = this.height_;
   if (textarea.scrollHeight) {
     var setMinHeight = false;
     var setMaxHeight = false;
@@ -485,6 +497,9 @@ goog.ui.Textarea.prototype.grow_ = function(opt_e) {
 
   if (shouldCallShrink) {
     this.shrink_();
+  }
+  if (oldHeight != this.height_) {
+    this.dispatchEvent(goog.ui.Textarea.EventType.RESIZE);
   }
 };
 

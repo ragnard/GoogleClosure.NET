@@ -15,6 +15,8 @@
 /**
  * @fileoverview Datastructure: Hash Map.
  *
+ * @author arv@google.com (Erik Arvidsson)
+ * @author jonp@google.com (Jon Perlow) Optimized for IE6
  *
  * This file contains an implementation of a Map structure. It implements a lot
  * of the methods used in goog.structs so those functions work on hashes.  For
@@ -301,6 +303,7 @@ goog.structs.Map.prototype.get = function(key, opt_val) {
  * Adds a key-value pair to the map.
  * @param {*} key The key.
  * @param {*} value The value to add.
+ * @return {*} Some subclasses return a value.
  */
 goog.structs.Map.prototype.set = function(key, value) {
   if (!(goog.structs.Map.hasKey_(this.map_, key))) {

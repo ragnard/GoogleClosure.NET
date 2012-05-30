@@ -15,6 +15,7 @@
 /**
  * @fileoverview A toolbar-style renderer for {@link goog.ui.ColorMenuButton}.
  *
+ * @author attila@google.com (Attila Bodis)
  */
 
 goog.provide('goog.ui.ToolbarColorMenuButtonRenderer');
@@ -82,8 +83,9 @@ goog.ui.ToolbarColorMenuButtonRenderer.prototype.setValue = function(element,
  * Initializes the button's DOM when it enters the document.  Overrides the
  * superclass implementation by making sure the button's color indicator is
  * initialized.
- * @param {goog.ui.ColorMenuButton} button Button whose DOM is to be
+ * @param {goog.ui.Control} button goog.ui.ColorMenuButton whose DOM is to be
  *     initialized as it enters the document.
+ * @override
  */
 goog.ui.ToolbarColorMenuButtonRenderer.prototype.initializeDom = function(
     button) {

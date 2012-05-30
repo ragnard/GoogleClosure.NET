@@ -63,7 +63,7 @@ goog.ui.emoji.EmojiPaletteRenderer.cellId_ = 0;
 goog.ui.emoji.EmojiPaletteRenderer.prototype.defaultImgUrl_ = null;
 
 
-/** @inheritDoc */
+/** @override */
 goog.ui.emoji.EmojiPaletteRenderer.getCssClass = function() {
   return goog.getCssName('goog-ui-emojipalette');
 };
@@ -161,7 +161,7 @@ goog.ui.emoji.EmojiPaletteRenderer.prototype.buildElementFromSpriteMetadata =
 };
 
 
-/** @inheritDoc */
+/** @override */
 goog.ui.emoji.EmojiPaletteRenderer.prototype.createCell = function(node, dom) {
   // Create a cell with  the default img if we're out of items, in order to
   // prevent jitter in the table. If there's no default img url, just create an
@@ -191,6 +191,7 @@ goog.ui.emoji.EmojiPaletteRenderer.prototype.createCell = function(node, dom) {
  * @param {goog.ui.Palette} palette Palette in which to look for the item.
  * @param {Node} node Node to look for.
  * @return {Node} The corresponding palette item (null if not found).
+ * @override
  */
 goog.ui.emoji.EmojiPaletteRenderer.prototype.getContainingItem =
     function(palette, node) {

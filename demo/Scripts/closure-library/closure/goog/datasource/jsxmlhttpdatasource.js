@@ -91,6 +91,7 @@ goog.ds.JsXmlHttpDataSource.prototype.endText_;
 /**
  * Gets the state of the backing data for this node
  * @return {goog.ds.LoadState} The state.
+ * @override
  */
 goog.ds.JsXmlHttpDataSource.prototype.getLoadState = function() {
   return this.loadState_;
@@ -111,6 +112,7 @@ goog.ds.JsXmlHttpDataSource.prototype.setQueryData = function(data) {
 /**
  * Load or reload the backing data for this node.
  * Fires the JsonDataSource
+ * @override
  */
 goog.ds.JsXmlHttpDataSource.prototype.load = function() {
   goog.ds.logger.info('Sending JS request for DataSource ' +
@@ -171,7 +173,7 @@ goog.ds.JsXmlHttpDataSource.prototype.completed_ = function(e) {
     // Eval result
     /** @preserveTry */
     try {
-      var jsonObj = eval('[' + text + '][0]');
+      var jsonObj = /** @type {Object} */ (eval('[' + text + '][0]'));
       this.extendWith_(jsonObj);
       this.loadState_ = goog.ds.LoadState.LOADED;
     }

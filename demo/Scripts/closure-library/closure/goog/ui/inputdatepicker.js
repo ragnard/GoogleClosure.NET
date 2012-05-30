@@ -193,6 +193,7 @@ goog.ui.InputDatePicker.prototype.getInputValueAsDate_ = function() {
 
 /**
  * Creates an input element for use with the popup date picker.
+ * @override
  */
 goog.ui.InputDatePicker.prototype.createDom = function() {
   this.setElementInternal(
@@ -212,9 +213,7 @@ goog.ui.InputDatePicker.prototype.setPopupParentElement = function(el) {
 };
 
 
-/**
- * Called when the DOM for the component is for sure in the document.
- */
+/** @override */
 goog.ui.InputDatePicker.prototype.enterDocument = function() {
   goog.ui.InputDatePicker.superClass_.enterDocument.call(this);
   var el = this.getElement();
@@ -235,10 +234,7 @@ goog.ui.InputDatePicker.prototype.enterDocument = function() {
 };
 
 
-/**
- * Called when the DOM for the component is removed from the document or
- * when the component no longer is managing the DOM.
- */
+/** @override */
 goog.ui.InputDatePicker.prototype.exitDocument = function() {
   goog.ui.InputDatePicker.superClass_.exitDocument.call(this);
   var el = this.getElement();
@@ -249,7 +245,7 @@ goog.ui.InputDatePicker.prototype.exitDocument = function() {
 };
 
 
-/** @inheritDoc */
+/** @override */
 goog.ui.InputDatePicker.prototype.decorateInternal = function(element) {
   goog.ui.InputDatePicker.superClass_.decorateInternal.call(this, element);
 
@@ -257,7 +253,7 @@ goog.ui.InputDatePicker.prototype.decorateInternal = function(element) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 goog.ui.InputDatePicker.prototype.disposeInternal = function() {
   goog.ui.InputDatePicker.superClass_.disposeInternal.call(this);
   this.popupDatePicker_.dispose();

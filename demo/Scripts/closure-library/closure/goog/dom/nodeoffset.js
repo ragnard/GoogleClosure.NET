@@ -70,6 +70,7 @@ goog.inherits(goog.dom.NodeOffset, goog.Disposable);
 
 /**
  * @return {string} A string representation of this object.
+ * @override
  */
 goog.dom.NodeOffset.prototype.toString = function() {
   var strs = [];
@@ -104,7 +105,7 @@ goog.dom.NodeOffset.prototype.findTargetNode = function(baseNode) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 goog.dom.NodeOffset.prototype.disposeInternal = function() {
   delete this.offsetStack_;
   delete this.nameStack_;

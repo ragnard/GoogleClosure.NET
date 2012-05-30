@@ -23,6 +23,7 @@ goog.require('goog.events.BrowserEvent');
 goog.require('goog.math.Coordinate');
 goog.require('goog.math.Size');
 goog.require('goog.style');
+goog.require('goog.style_test');
 goog.require('goog.testing.jsunit');
 goog.require('goog.userAgent');
 
@@ -495,6 +496,15 @@ Test-visible
 <div id="offset-parent" style="position:relative">
   <div id="offset-child">child</div>
 </div>
+
+<div id="offset-parent-overflow"
+     style="overflow: scroll; width: 50px; height: 50px;">
+  <a id="offset-child-overflow">
+    scrollscrollscrollscrollscrollscrollscrollscroll
+  </a>
+</div>
+
+<div id="test-viewport"></div>
 <script>
 
 var EPSILON = 2;
@@ -522,6 +532,9 @@ function tearDown() {
   var testVisibleDiv2 = goog.dom.getElement('test-visible2');
   testVisibleDiv2.setAttribute('style', '');
   testVisibleDiv2.innerHTML = '';
+  var testViewport = goog.dom.getElement('test-viewport');
+  testViewport.setAttribute('style', '');
+  testViewport.innerHTML = '';
 }
 
 function testSetStyle() {
@@ -1406,6 +1419,14 @@ function testSetBorderBoxSize() {
              goog.userAgent.IE && goog.userAgent.isVersion('8')) {
     assertEquals('border-box', el.style.boxSizing);
   }
+
+  // Try a negative width/height.
+  setBorderBoxSize(el, new Size(-10, -10));
+
+  // Setting the border box smaller than the borders will just give you
+  // a content box of size 0.
+  assertEquals(20, el.offsetWidth);
+  assertEquals(20, el.offsetHeight);
 }
 
 function testSetContentBoxSize() {
@@ -1452,6 +1473,11 @@ function testSetContentBoxSize() {
              goog.userAgent.IE && goog.userAgent.isVersion('8')) {
     assertEquals('content-box', el.style.boxSizing);
   }
+
+  // Try a negative width/height.
+  setContentBoxSize(el, new Size(-10, -10));
+  assertEquals(20, el.offsetWidth);
+  assertEquals(20, el.offsetHeight);
 }
 
 function testGetPaddingBox() {
@@ -2303,50 +2329,38 @@ function testScrollIntoContainerView() {
 }
 
 function testScrollBarWidth() {
-  var width = goog.style.getScrollbarWidth();
-  assertTrue(width > 0);
-
-  var outer = goog.dom.getElement('test-scrollbarwidth');
-  var inner = goog.dom.getElementsByTagNameAndClass('div', null, outer)[0];
-  assertTrue('should have a scroll bar', hasVerticalScroll(outer));
-  assertTrue('should have a scroll bar', hasHorizontalScroll(outer));
-
-  // Get the inner div absolute width
-  goog.style.setStyle(outer, 'width', '100%');
-  assertTrue('should have a scroll bar', hasVerticalScroll(outer));
-  assertFalse('should not have a scroll bar', hasHorizontalScroll(outer));
-  var innerAbsoluteWidth = inner.offsetWidth;
-
-  // Leave the vertical scroll and remove the horizontal by using the scroll
-  // bar width calculation.
-  goog.style.setStyle(outer, 'width',
-      (innerAbsoluteWidth + width) + 'px');
-  assertTrue('should have a scroll bar', hasVerticalScroll(outer));
-  assertFalse('should not have a scroll bar', hasHorizontalScroll(outer));
-
-  // verify by adding 1 more pixel (brings back the vertical scroll bar).
-  goog.style.setStyle(outer, 'width',
-      (innerAbsoluteWidth + width - 1) + 'px');
-  assertTrue('should have a scroll bar', hasVerticalScroll(outer));
-  assertTrue('should have a scroll bar', hasHorizontalScroll(outer));
-}
-
-function testScrollBarWidth_webkitScrollbar() {
-  // Mess with the default scrollbar styling.
-  var styles = goog.style.installStyles('::-webkit-scrollbar {width: 30px;}');
-  try {
-    var width = goog.style.getScrollbarWidth();
-    assertTrue(width > 0);
-  } finally {
-    goog.style.uninstallStyles(styles);
-  }
+  goog.style_test.testScrollbarWidth();
 }
 
 function testOffsetParent() {
-  var $ = goog.dom.getElement;
-  var parent = $('offset-parent');
-  var child = $('offset-child');
+  var parent = goog.dom.getElement('offset-parent');
+  var child = goog.dom.getElement('offset-child');
   assertEquals(parent, goog.style.getOffsetParent(child));
+}
+
+function testOverflowOffsetParent() {
+  var parent = goog.dom.getElement('offset-parent-overflow');
+  var child = goog.dom.getElement('offset-child-overflow');
+  assertEquals(parent, goog.style.getOffsetParent(child));
+}
+
+function testGetViewportPageOffset() {
+  var testViewport = goog.dom.getElement('test-viewport');
+  testViewport.style.height = '5000px';
+  testViewport.style.width = '5000px';
+  var offset = goog.style.getViewportPageOffset(document);
+  assertEquals(0, offset.x);
+  assertEquals(0, offset.y);
+
+  window.scrollTo(0, 100);
+  offset = goog.style.getViewportPageOffset(document);
+  assertEquals(0, offset.x);
+  assertEquals(100, offset.y);
+
+  window.scrollTo(100, 0);
+  offset = goog.style.getViewportPageOffset(document);
+  assertEquals(100, offset.x);
+  assertEquals(0, offset.y);
 }
 
 function hasVerticalScroll(el) {
@@ -2354,7 +2368,7 @@ function hasVerticalScroll(el) {
 }
 
 function hasHorizontalScroll(el) {
-  return el.clientHeight != 0 && el.offsetHeight - el.clientHeight  > 0;
+  return el.clientHeight != 0 && el.offsetHeight - el.clientHeight > 0;
 }
 </script>
 

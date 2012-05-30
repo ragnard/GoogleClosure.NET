@@ -303,6 +303,7 @@ goog.ui.ServerChart.prototype.numVisibleDataSets_ = null;
 
 /**
  * Creates the DOM node (image) needed for the Chart
+ * @override
  */
 goog.ui.ServerChart.prototype.createDom = function() {
   var size = this.getSize();
@@ -1775,7 +1776,7 @@ goog.ui.ServerChart.prototype.arrayMax_ = function(ary) {
 };
 
 
-/** @inheritDoc */
+/** @override */
 goog.ui.ServerChart.prototype.disposeInternal = function() {
   goog.ui.ServerChart.superClass_.disposeInternal.call(this);
   delete this.xLabels_;

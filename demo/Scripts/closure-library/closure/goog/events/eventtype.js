@@ -15,6 +15,8 @@
 /**
  * @fileoverview Event Types.
  *
+ * @author arv@google.com (Erik Arvidsson)
+ * @author mirkov@google.com (Mirko Visontai)
  */
 
 
@@ -107,7 +109,17 @@ goog.events.EventType = {
   BEFORECUT: 'beforecut',
   BEFOREPASTE: 'beforepaste',
 
+  // HTML5 online/offline events.
+  // http://www.w3.org/TR/offline-webapps/#related
+  ONLINE: 'online',
+  OFFLINE: 'offline',
+
   // HTML 5 worker events
   MESSAGE: 'message',
-  CONNECT: 'connect'
+  CONNECT: 'connect',
+
+  // CSS transition events. Based on the browser support described at:
+  // https://developer.mozilla.org/en/css/css_transitions#Browser_compatibility
+  TRANSITIONEND: goog.userAgent.WEBKIT ? 'webkitTransitionEnd' :
+      (goog.userAgent.OPERA ? 'oTransitionEnd' : 'transitionend')
 };
