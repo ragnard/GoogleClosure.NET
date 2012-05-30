@@ -11,3 +11,7 @@ _ReSharper.*/
 *.vspscc
 *.vssscc
 *.nupkg
+GoogleClosure.Demo/Scripts/demo.js
+GoogleClosure.Demo/Scripts/demo.js.map
+GoogleClosure.Demo/Scripts/demo/deps.js
+
