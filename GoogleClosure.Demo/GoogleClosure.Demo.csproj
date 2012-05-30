@@ -55,7 +55,9 @@
   <ItemGroup>
     <Content Include="demo_compiled.html" />
     <Content Include="demo.html" />
-    <None Include="GoogleClosure.targets" />
+    <None Include="GoogleClosure.targets">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Scripts\closure-library\AUTHORS" />
     <None Include="Scripts\closure-library\closure\goog\net\iframeio_different_base_test.data" />
     <None Include="Scripts\closure-library\LICENSE" />
