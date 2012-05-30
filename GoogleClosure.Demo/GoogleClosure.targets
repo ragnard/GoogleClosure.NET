@@ -40,7 +40,6 @@
 
   </ItemGroup>
 
-
   <Target Name="CreateDemoDependencyFile" Inputs="@(AllDemoJavaScriptFiles)" Outputs="$(DemoScriptsDepsFile)">
     <WriteDependencies
       ClosureBasePath="$(GoogleClosureLibraryBase)"
