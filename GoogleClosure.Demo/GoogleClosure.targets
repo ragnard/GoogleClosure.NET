@@ -58,7 +58,7 @@
       CompilerJar="$(GoogleClosureCompilerJar)"
       CompilationLevel="Advanced"
     />
-    <WriteLinesToFile File="$(DemoCompiledFile)" Overwrite="false" Lines="//@ sourceMappingURL=/Scripts/demo.js.map" />
+    <WriteLinesToFile File="$(DemoCompiledFile)" Overwrite="false" Lines="//@ sourceMappingURL=$(DemoSourceMapFile)" />
   </Target>
  
 </Project>
