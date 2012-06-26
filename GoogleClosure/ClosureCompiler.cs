@@ -14,6 +14,7 @@ namespace GoogleClosure
     {
         public string JarPath { get; set; }
         public string JavaPath { get; set; }
+        public string JavaFlags { get; set; }
 
         public Action<string> OnStandardOutputWrite { get; set; }
         public Action<string> OnStandardErrorWrite { get; set; }
@@ -23,15 +24,17 @@ namespace GoogleClosure
         /// </summary>
         /// <param name="jarPath">Path to <code>closure-compiler.jar</code></param>
         /// <param name="javaPath"></param>
-        public ClosureCompiler(string jarPath, string javaPath = null)
+        /// <param name="javaFlags"> </param>
+        public ClosureCompiler(string jarPath, string javaPath = null, string javaFlags = null)
         {
             JarPath = jarPath;
             JavaPath = DetermineJavaExecutablePath(javaPath);
+            JavaFlags = javaFlags;
         }
 
         private static string DetermineJavaExecutablePath(string javaPath)
         {
-            if(javaPath != null)
+            if (javaPath != null)
             {
                 return javaPath;
             }
@@ -39,7 +42,7 @@ namespace GoogleClosure
             {
                 var discoveredPath = JavaExecutableDiscovery.DisoverJavaExecutablePath();
 
-                if(discoveredPath == null)
+                if (discoveredPath == null)
                 {
                     throw new ApplicationException(
                         string.Format(
@@ -64,6 +67,7 @@ namespace GoogleClosure
 
                 process.Start();
 
+
                 if (outputStream != null)
                 {
                     while (!process.StandardOutput.EndOfStream)
@@ -73,7 +77,15 @@ namespace GoogleClosure
                 }
                 else
                 {
-                    process.StandardOutput.ReadToEnd();
+                    if (OnStandardOutputWrite != null)
+                    {
+                        OnStandardOutputWrite(process.StandardOutput.ReadToEnd());
+                    }
+
+                    if(OnStandardErrorWrite != null)
+                    {
+                        OnStandardErrorWrite(process.StandardError.ReadToEnd());
+                    }
                 }
 
                 if (!process.WaitForExit((int)TimeSpan.FromMinutes(1).TotalMilliseconds))
@@ -126,6 +138,21 @@ namespace GoogleClosure
         {
             var sb = new StringBuilder();
 
+            if (JavaFlags != null)
+            {
+                if(!JavaFlags.StartsWith(" "))
+                {
+                    sb.Append(" ");
+                }
+
+                sb.Append(JavaFlags);
+
+                if(!JavaFlags.EndsWith(" "))
+                {
+                    sb.Append(" ");
+                }
+            }
+
             sb.AppendFormat("-jar \"{0}\"", JarPath);
 
             sb.Append(" ");
@@ -139,6 +166,6 @@ namespace GoogleClosure
             return sb.ToString();
         }
 
-       
+
     }
 }

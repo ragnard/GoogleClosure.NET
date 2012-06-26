@@ -27,6 +27,8 @@ namespace GoogleClosure.MSBuild
 
         public string JavaPath { get; set; }
 
+        public string JavaFlags { get; set; }
+
         [Required]
         public string OutputFile { get; set; }
 
@@ -147,7 +149,7 @@ namespace GoogleClosure.MSBuild
 
         private void CompileSourceFiles(string rootDirectory, IEnumerable<IAnalyzedSourceFile> sourceFiles)
         {
-            var compiler = new ClosureCompiler(CompilerJar, JavaPath);
+            var compiler = new ClosureCompiler(CompilerJar, JavaPath, JavaFlags);
             compiler.OnStandardErrorWrite = line => Log.LogWarning(line);
             compiler.OnStandardOutputWrite = line => Log.LogMessage(line);
 
